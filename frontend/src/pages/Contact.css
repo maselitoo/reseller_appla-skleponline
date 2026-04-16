@@ -115,3 +115,27 @@
     font-size: 2rem;
   }
 }
+
+
+/* Submit message styling */
+.submit-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #c3e6cb;
+  font-size: 1rem;
+}
+
+/* Link styling in contact info */
+.contact-item a {
+  color: #0071e3;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.contact-item a:hover {
+  color: #0077ed;
+  text-decoration: underline;
+}

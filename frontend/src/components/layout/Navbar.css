@@ -92,3 +92,13 @@
     display: none;
   }
 }
+
+
+/* User greeting */
+.user-greeting {
+  color: #1d1d1f;
+  font-weight: 500;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+}

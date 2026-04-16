@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom'
 import './Home.css'
 
 function Home() {
+  const navigate = useNavigate()
+
   return (
     <div className="home">
       {/* Hero Section */}
@@ -16,10 +19,16 @@ function Home() {
             Gwarancja, szybka wysyłka, najlepsze ceny na rynku.
           </p>
           <div className="hero-buttons">
-            <button className="btn-primary btn-large">
+            <button
+              className="btn-primary btn-large"
+              onClick={() => navigate('/products')}
+            >
               Zobacz produkty
             </button>
-            <button className="btn-secondary btn-large">
+            <button
+              className="btn-secondary btn-large"
+              onClick={() => navigate('/about')}
+            >
               Dowiedz się więcej
             </button>
           </div>
@@ -44,22 +53,38 @@ function Home() {
       <section className="categories-section">
         <h2 className="section-title">Popularne kategorie</h2>
         <div className="categories-grid">
-          <div className="category-card">
+          <div
+            className="category-card"
+            onClick={() => navigate('/products?category=iPhone')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="category-icon">📱</div>
             <h3>iPhone</h3>
             <p>Najnowsze modele iPhone</p>
           </div>
-          <div className="category-card">
+          <div
+            className="category-card"
+            onClick={() => navigate('/products?category=MacBook')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="category-icon">💻</div>
             <h3>MacBook</h3>
             <p>MacBook Air i Pro</p>
           </div>
-          <div className="category-card">
+          <div
+            className="category-card"
+            onClick={() => navigate('/products?category=Watch')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="category-icon">⌚</div>
             <h3>Apple Watch</h3>
             <p>Inteligentne zegarki</p>
           </div>
-          <div className="category-card">
+          <div
+            className="category-card"
+            onClick={() => navigate('/products?category=AirPods')}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="category-icon">🎧</div>
             <h3>AirPods</h3>
             <p>Bezprzewodowe słuchawki</p>

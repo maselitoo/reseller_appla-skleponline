@@ -1,6 +1,39 @@
+import { useState, type FormEvent } from 'react'
 import './Contact.css'
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState('')
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitMessage('')
+
+    // Symulacja wysyłki (później będzie to API call)
+    setTimeout(() => {
+      setSubmitMessage('✅ Wiadomość została wysłana! Odpowiemy najszybciej jak to możliwe.')
+      setFormData({ name: '', email: '', subject: '', message: '' })
+      setIsSubmitting(false)
+      
+      // Wyczyść komunikat po 5 sekundach
+      setTimeout(() => setSubmitMessage(''), 5000)
+    }, 1000)
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value
+    })
+  }
+
   return (
     <div className="contact-page">
       <div className="contact-header">
@@ -16,8 +49,9 @@ function Contact() {
             <span className="contact-icon">📧</span>
             <div>
               <h3>Email</h3>
-              <p>kontakt@resellerapple.pl</p>
-              <p>support@resellerapple.pl</p>
+              <a href="mailto:kontakt@resellerapple.pl">kontakt@resellerapple.pl</a>
+              <br />
+              <a href="mailto:support@resellerapple.pl">support@resellerapple.pl</a>
             </div>
           </div>
 
@@ -25,7 +59,7 @@ function Contact() {
             <span className="contact-icon">📞</span>
             <div>
               <h3>Telefon</h3>
-              <p>+48 123 456 789</p>
+              <a href="tel:+48123456789">+48 123 456 789</a>
               <p>Pon-Pt: 9:00 - 18:00</p>
             </div>
           </div>
@@ -52,12 +86,17 @@ function Contact() {
 
         <div className="contact-form-container">
           <h2>Wyślij wiadomość</h2>
-          <form className="contact-form">
+          {submitMessage && (
+            <div className="submit-message">{submitMessage}</div>
+          )}
+          <form className="contact-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name">Imię i nazwisko</label>
-              <input 
-                type="text" 
-                id="name" 
+              <input
+                type="text"
+                id="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Jan Kowalski"
                 required
               />
@@ -65,9 +104,11 @@ function Contact() {
 
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
+              <input
+                type="email"
+                id="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="jan@example.com"
                 required
               />
@@ -75,9 +116,11 @@ function Contact() {
 
             <div className="form-group">
               <label htmlFor="subject">Temat</label>
-              <input 
-                type="text" 
-                id="subject" 
+              <input
+                type="text"
+                id="subject"
+                value={formData.subject}
+                onChange={handleChange}
                 placeholder="Pytanie o produkt"
                 required
               />
@@ -85,16 +128,22 @@ function Contact() {
 
             <div className="form-group">
               <label htmlFor="message">Wiadomość</label>
-              <textarea 
-                id="message" 
+              <textarea
+                id="message"
                 rows={6}
+                value={formData.message}
+                onChange={handleChange}
                 placeholder="Twoja wiadomość..."
                 required
               />
             </div>
 
-            <button type="submit" className="btn-primary btn-large">
-              Wyślij wiadomość
+            <button
+              type="submit"
+              className="btn-primary btn-large"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Wysyłanie...' : 'Wyślij wiadomość'}
             </button>
           </form>
         </div>

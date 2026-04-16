@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 import './Products.css'
 
 // Tymczasowe dane produktów z prawdziwymi obrazkami
@@ -78,10 +80,46 @@ const productsData = [
 ]
 
 function Products() {
-  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All')
   const [sortBy, setSortBy] = useState('name')
 
   const categories = ['All', 'iPhone', 'MacBook', 'iPad', 'Watch', 'AirPods']
+
+  // Aktualizuj kategorię z URL
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category')
+    if (categoryFromUrl && categories.includes(categoryFromUrl)) {
+      setSelectedCategory(categoryFromUrl)
+    }
+  }, [searchParams])
+
+  const { addToCart } = useCart()
+
+  // Funkcja dodawania do koszyka
+  const handleAddToCart = (product: typeof productsData[0]) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image
+    })
+    
+    // Pokaż krótkie powiadomienie
+    const notification = document.createElement('div')
+    notification.className = 'cart-notification'
+    notification.textContent = `✓ ${product.name} dodano do koszyka`
+    document.body.appendChild(notification)
+    
+    setTimeout(() => {
+      notification.classList.add('show')
+    }, 10)
+    
+    setTimeout(() => {
+      notification.classList.remove('show')
+      setTimeout(() => notification.remove(), 300)
+    }, 2000)
+  }
 
   // Filtrowanie produktów
   const filteredProducts = selectedCategory === 'All' 
@@ -153,7 +191,12 @@ function Products() {
                 <div className="product-footer">
                   <span className="product-price">{product.price.toLocaleString('pl-PL')} zł</span>
                   {product.inStock ? (
-                    <button className="btn-primary">Dodaj do koszyka</button>
+                    <button
+                      className="btn-primary"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Dodaj do koszyka
+                    </button>
                   ) : (
                     <button className="btn-secondary" disabled>Brak w magazynie</button>
                   )}

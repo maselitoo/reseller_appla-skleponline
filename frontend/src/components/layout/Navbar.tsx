@@ -1,7 +1,20 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
 import './Navbar.css'
 
 function Navbar() {
+  const navigate = useNavigate()
+  const { getTotalItems } = useCart()
+  const { user, logout } = useAuth()
+  const totalItems = getTotalItems()
+
+  const handleLogout = () => {
+    logout()
+    alert('Wylogowano pomyślnie!')
+    navigate('/')
+  }
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -18,8 +31,19 @@ function Navbar() {
         </ul>
         
         <div className="nav-actions">
-          <button className="btn-secondary">Zaloguj</button>
-          <button className="btn-primary">🛒 Koszyk (0)</button>
+          {user ? (
+            <>
+              <span className="user-greeting">Cześć, {user.name}!</span>
+              <button onClick={handleLogout} className="btn-secondary">
+                🚪 Wyloguj
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="btn-secondary">👤 Zaloguj</Link>
+          )}
+          <Link to="/cart" className="btn-primary cart-btn">
+            🛒 Koszyk {totalItems > 0 && `(${totalItems})`}
+          </Link>
         </div>
       </div>
     </nav>
