@@ -79,12 +79,13 @@ const productsData = [
   }
 ]
 
+// Kategorie jako stała poza komponentem
+const categories = ['All', 'iPhone', 'MacBook', 'iPad', 'Watch', 'AirPods']
+
 function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All')
   const [sortBy, setSortBy] = useState('name')
-
-  const categories = ['All', 'iPhone', 'MacBook', 'iPad', 'Watch', 'AirPods']
 
   // Aktualizuj kategorię z URL
   useEffect(() => {
