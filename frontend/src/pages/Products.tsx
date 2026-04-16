@@ -83,7 +83,7 @@ const productsData = [
 const categories = ['All', 'iPhone', 'MacBook', 'iPad', 'Watch', 'AirPods']
 
 function Products() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All')
   const [sortBy, setSortBy] = useState('name')
 
