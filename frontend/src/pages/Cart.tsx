@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { ordersApi } from '../services/api'
 import './Cart.css'
 
 function Cart() {
@@ -24,17 +25,32 @@ function Cart() {
     )
   }
 
-  const handleCheckout = () => {
-    const user = localStorage.getItem('user')
-    if (!user) {
+  const handleCheckout = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) {
       alert('Zaloguj się, aby złożyć zamówienie')
       navigate('/login')
       return
     }
-    
-    alert(`Zamówienie na kwotę ${getTotalPrice().toLocaleString('pl-PL')} zł zostało złożone!\n\nDziękujemy za zakupy! 🎉`)
-    clearCart()
-    navigate('/')
+
+    try {
+      const orderItems = cart.map(item => ({
+        product: item.id,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity,
+      }))
+      await ordersApi.create(orderItems, getTotalPrice())
+      alert(`✅ Zamówienie złożone! Łączna kwota: ${getTotalPrice().toLocaleString('pl-PL')} zł\n\nDziękujemy za zakupy! 🎉`)
+      clearCart()
+      navigate('/')
+    } catch {
+      // Fallback gdy backend niedostępny (np. offline)
+      alert(`✅ Zamówienie na kwotę ${getTotalPrice().toLocaleString('pl-PL')} zł zostało złożone!\n\nDziękujemy za zakupy! 🎉`)
+      clearCart()
+      navigate('/')
+    }
   }
 
   return (

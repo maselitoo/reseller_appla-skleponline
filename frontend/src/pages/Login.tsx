@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { authApi } from '../services/api'
 import './Login.css'
 
 function Login() {
@@ -11,7 +12,7 @@ function Login() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -19,48 +20,29 @@ function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
-    setIsLoading(true)
 
-    // Walidacja
     if (!isLogin && formData.password !== formData.confirmPassword) {
       setError('Hasła nie są identyczne')
-      setIsLoading(false)
       return
     }
 
-    // Symulacja logowania/rejestracji (później będzie API call)
-    setTimeout(() => {
-      if (isLogin) {
-        // Symulacja logowania - wyciągnij imię z emaila
-        const emailName = formData.email.split('@')[0]
-        const displayName = emailName.charAt(0).toUpperCase() + emailName.slice(1)
-        
-        const userData = {
-          name: displayName,
-          email: formData.email
-        }
-        login(userData)
-        alert(`✅ Zalogowano pomyślnie jako ${displayName}!`)
-        navigate('/')
-      } else {
-        // Symulacja rejestracji
-        const userData = {
-          name: formData.name,
-          email: formData.email
-        }
-        login(userData)
-        alert(`✅ Konto utworzone i zalogowano jako ${formData.name}!`)
-        navigate('/')
-      }
+    setIsLoading(true)
+    try {
+      const userData = isLogin
+        ? await authApi.login(formData.email, formData.password)
+        : await authApi.register(formData.name, formData.email, formData.password)
+
+      login(userData)
+      navigate('/')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Wystąpił błąd. Spróbuj ponownie.')
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   return (
@@ -69,8 +51,8 @@ function Login() {
         <div className="login-card">
           <h1>{isLogin ? 'Zaloguj się' : 'Utwórz konto'}</h1>
           <p className="login-subtitle">
-            {isLogin 
-              ? 'Witaj ponownie! Zaloguj się do swojego konta.' 
+            {isLogin
+              ? 'Witaj ponownie! Zaloguj się do swojego konta.'
               : 'Dołącz do nas i zacznij zakupy!'}
           </p>
 
@@ -135,14 +117,16 @@ function Login() {
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn-primary btn-large btn-full"
               disabled={isLoading}
             >
-              {isLoading 
-                ? 'Proszę czekać...' 
-                : isLogin ? 'Zaloguj się' : 'Utwórz konto'}
+              {isLoading
+                ? 'Proszę czekać...'
+                : isLogin
+                ? 'Zaloguj się'
+                : 'Utwórz konto'}
             </button>
           </form>
 
@@ -150,7 +134,7 @@ function Login() {
             <span>lub</span>
           </div>
 
-          <button 
+          <button
             type="button"
             className="btn-secondary btn-large btn-full"
             onClick={() => {
@@ -172,5 +156,3 @@ function Login() {
 }
 
 export default Login
-
-// Made with Bob

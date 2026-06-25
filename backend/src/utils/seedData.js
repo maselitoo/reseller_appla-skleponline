@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { join } from 'path';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
 import Order from '../models/Order.js';
 import connectDB from '../config/database.js';
 
-dotenv.config();
+dotenv.config({ path: join(process.cwd(), '.env') });
 
 const users = [
   {

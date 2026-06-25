@@ -1,52 +1,67 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import type { AuthUser } from '../services/api'
 
 interface User {
+  _id?: string
   name: string
   email: string
+  role?: string
 }
 
 interface AuthContextType {
   user: User | null
-  login: (user: User) => void
+  token: string | null
+  login: (userData: AuthUser) => void
   logout: () => void
   isAuthenticated: boolean
+  isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string | null>(null)
 
-  // Sprawdź localStorage przy starcie
+  // Wczytaj dane z localStorage przy starcie
   useEffect(() => {
-    const savedUser = localStorage.getItem('user')
-    if (savedUser) {
-      try {
+    try {
+      const savedUser = localStorage.getItem('user')
+      const savedToken = localStorage.getItem('token')
+      if (savedUser && savedToken) {
         setUser(JSON.parse(savedUser))
-      } catch (error) {
-        console.error('Error parsing user data:', error)
-        localStorage.removeItem('user')
+        setToken(savedToken)
       }
+    } catch {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
     }
   }, [])
 
-  const login = (userData: User) => {
-    setUser(userData)
-    localStorage.setItem('user', JSON.stringify(userData))
+  const login = (userData: AuthUser) => {
+    const { token: jwt, ...userInfo } = userData
+    setUser(userInfo)
+    setToken(jwt)
+    localStorage.setItem('user', JSON.stringify(userInfo))
+    localStorage.setItem('token', jwt)
   }
 
   const logout = () => {
     setUser(null)
+    setToken(null)
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
   }
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        token,
         login,
         logout,
-        isAuthenticated: !!user
+        isAuthenticated: !!user,
+        isAdmin: user?.role === 'admin',
       }}
     >
       {children}
@@ -61,5 +76,3 @@ export function useAuth() {
   }
   return context
 }
-
-// Made with Bob
