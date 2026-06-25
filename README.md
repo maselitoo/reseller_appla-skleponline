@@ -2,6 +2,32 @@
 
 > Projekt semestralny: Projektowanie i programowanie aplikacji PWA i mobilnych cross-platform
 
+## 🚀 Szybki start (TL;DR)
+
+```bash
+# 1. Sklonuj repo
+git clone https://github.com/maselitoo/reseller_appla-skleponline.git
+cd reseller_appla-skleponline
+
+# 2. Backend
+cd backend && npm install && npm run seed && node src/index.js
+
+# 3. Frontend (nowy terminal)
+cd frontend && npm install && npm run dev
+# Otwórz http://localhost:5173
+
+# 4. Mobile (nowy terminal)
+cd mobile && npm install && npx expo start
+# Skanuj QR w Expo Go
+```
+
+**Dane testowe:**
+| Email | Hasło | Rola |
+|-------|-------|------|
+| jan@example.com | password123 | user |
+| admin@resellerapple.pl | admin123 | admin |
+
+
 ---
 
 ## 1. Opis aplikacji
